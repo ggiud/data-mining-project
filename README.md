@@ -1,4 +1,4 @@
-🏠 Milan Housing Price Prediction – Data Mining Project
+**🏠 Milan Housing Price Prediction – Data Mining Project**
 Overview
 
 This project focuses on predicting housing prices in Milan using a dataset of 12,800 real estate listings. The goal is to build an interpretable and effective predictive model leveraging extensive feature engineering, statistical modeling, and machine learning techniques.
