@@ -1,83 +1,264 @@
-**🏠 Milan Housing Price Prediction – Data Mining Project**
-Overview
+# 🏠 Milan Housing Price Prediction – Data Mining Project
 
-This project focuses on predicting housing prices in Milan using a dataset of 12,800 real estate listings. The goal is to build an interpretable and effective predictive model leveraging extensive feature engineering, statistical modeling, and machine learning techniques.
+## **Overview**
 
-The dataset is split into:
+This project focuses on predicting housing prices in Milan using a dataset of **12,800 real estate listings**.
 
-8,000 training observations
-4,800 test observations
+The main objective is to build an accurate and interpretable predictive model through:
 
-Target variable: selling_price
+* data preprocessing
+* feature engineering
+* clustering techniques
+* statistical modeling
+* model validation
 
-Data Processing & Feature Engineering
+The dataset was divided into:
 
-The original dataset contains 16 variables, which were extensively transformed into 61 features through feature engineering and encoding.
+* **8,000 training observations**
+* **4,800 test observations**
 
-Key preprocessing steps include:
+The target variable is **selling_price**.
 
-Missing value imputation
-Regression-based imputation (logistic / ordinal models)
-Group-based mean imputation for structured variables
-Outlier handling
-Correction of unrealistic values (e.g., square meters < 13)
-Capping extreme condominium fees
-Feature transformations
-Log transformation of skewed variables (price, square meters)
-Aggregation of categorical levels (energy class, parking, floors)
-Dummy variable expansion
-Decomposition of other_features into binary indicators
-Feature Highlights
+---
 
-Main predictors used in the final model:
+## **Dataset & Feature Engineering**
 
-Square meters (log-transformed)
-Bathrooms and rooms number
-Distance from city center
-Building characteristics (floor, lift, condition, energy class)
-Amenities (parking, balcony, garden, concierge, etc.)
-Zone-based clustering (see below)
-Spatial Clustering
+The original dataset contained **16 variables**, which were transformed into a richer feature space through preprocessing and feature engineering.
 
-To capture geographical heterogeneity, Milan zones were clustered using K-Means, based on price per square meter.
+In particular:
 
-Resulting variable: cluster (20 levels)
-Central areas and peripheral zones are clearly separated
-Helps reduce dimensionality while preserving spatial structure
-Modeling Approach
+* the variable **other_features** was decomposed into several dummy variables
+* additional categorical transformations were applied
+* the final dataset included more than **60 predictors**
 
-The final predictive model is a linear regression model on log-transformed prices, defined as:
+### **Main preprocessing steps**
 
-Response: log(selling_price)
-Predictors: housing features + interaction terms + zone clusters
+* Missing value imputation
+* Outlier detection and correction
+* Dummy variable creation
+* Variable aggregation
+* Log transformations
+* Spatial clustering
 
-Alternative models tested:
+---
 
-Elastic Net
-Generalized Additive Model (GAM)
+## **Data Cleaning & Missing Value Imputation**
 
-Although GAM slightly outperformed in validation, the linear model was selected due to:
+Several variables required preprocessing and imputation.
 
-Higher interpretability
-Simplicity and stability
-Strong economic coherence of coefficients
-Model Evaluation
-Validation strategy: 75% train / 25% validation split
-Metric: Mean Absolute Error (MAE)
+### **Examples**
+
+* **square_meters**
+
+  * unrealistic values (<13 sqm) were treated as errors
+  * imputed using the average size of similar properties
+
+* **bathrooms_number**
+
+  * missing values imputed using ordinal logistic regression (POLR)
+
+* **year_of_construction**
+
+  * imputed using grouped averages based on:
+
+    * property condition
+    * energy class
+    * availability
+
+* **condominium_fees**
+
+  * extreme values (>12000) treated as anomalies
+  * missing values imputed using grouped averages
+
+* **energy_efficiency_class**
+
+  * classes aggregated into:
+
+    * low
+    * medium
+    * high
+
+Several additional variables were imputed using:
+
+* logistic regression
+* cumulative logistic regression
+* grouped statistics
+
+---
+
+## **Feature Highlights**
+
+Main variables used in the final model:
+
+* **square_meters**
+* **bathrooms_number**
+* **rooms_number**
+* **distance from Milan city center**
+* **energy efficiency class**
+* **parking availability**
+* **floor and building characteristics**
+* **security level**
+* **balcony / terrace**
+* **garden**
+* **clustered geographical area**
+
+The variable **zone** was not directly included in the model to reduce overfitting.
+
+---
+
+## **Spatial Clustering**
+
+Milan zones were clustered using **K-Means** based on:
+
+* average price per square meter
+
+This produced a new categorical variable:
+
+* **cluster** (20 levels)
+
+The clustering successfully separated:
+
+* central areas
+* peripheral areas
+
+while reducing the number of geographical coefficients required by the model.
+
+---
+
+## **Exploratory Data Analysis**
+
+The log-transformed distribution of:
+
+* **selling_price**
+* **square_meters**
+
+appeared approximately normal.
+
+A strong linear relationship emerged between:
+
+* log(square_meters)
+* log(selling_price)
+
+Additional analyses highlighted:
+
+* strong relationships between price and location
+* relevant effects of parking availability
+* higher prices for central properties
+* correlations between rooms, bathrooms, and house size
+
+---
+
+## **Predictive Modeling**
+
+The final predictive model was a **linear regression model** on log-transformed prices.
+
+### **Model Features**
+
+The model included:
+
+* log(square_meters)
+* bathrooms_number
+* rooms_number
+* condominium_fees
+* floor
+* lift
+* energy_efficiency_class
+* parking
+* distance
+* cluster
+* security_level
+* additional housing features
+
+Interaction terms were also included.
+
+---
+
+## **Model Comparison**
+
+The linear model was compared with:
+
+* **Elastic Net**
+* **Generalized Additive Model (GAM)**
+
+### **Results**
+
+Validation strategy:
+
+* 75% train
+* 25% validation
+
+Performance metric:
+
+* **Mean Absolute Error (MAE)**
 
 Results:
 
-Linear model MAE: ~77,342
-GAM MAE: ~76,094
-10-fold cross-validation confirmed good generalization performance
-Key Insights
-Property size is the strongest price driver
-Parking availability significantly increases price
-Distance from city center negatively impacts value
-Spatial clustering captures strong geographical price variation
-Log transformation improves linearity and normality assumptions
-Conclusion
+* **Linear Model MAE ≈ 77,342**
+* **GAM MAE ≈ 76,094**
 
-The final model provides a robust and interpretable solution for housing price prediction in Milan. Despite the availability of more complex models, the linear approach was preferred due to its transparency and strong economic interpretability.
+Although GAM achieved slightly better predictive performance, the linear model was selected due to:
 
-The inclusion of spatial clustering and feature engineering significantly improved predictive performance while maintaining model simplicity.
+* interpretability
+* simplicity
+* computational efficiency
+
+A **10-fold cross-validation** confirmed good generalization performance.
+
+---
+
+## **Key Findings**
+
+The most influential variables were:
+
+* property size
+* geographical area
+* parking availability
+* distance from the city center
+
+The introduction of clustered geographical areas significantly reduced prediction error while avoiding overfitting.
+
+Log-transforming the response variable improved:
+
+* normality assumptions
+* linearity between predictors and target
+
+---
+
+## **Conclusion**
+
+The final linear model proved to be:
+
+* simple
+* interpretable
+* computationally efficient
+* effective for real estate price prediction
+
+Despite the availability of more complex methods, the linear approach achieved competitive predictive performance while remaining easy to understand and apply.
+
+This makes the model potentially useful even for non-technical users operating in the real estate market.
+
+---
+
+## **Methods & Techniques**
+
+* Data preprocessing
+* Missing value imputation
+* Feature engineering
+* K-Means clustering
+* Linear regression
+* Elastic Net
+* Generalized Additive Models (GAM)
+* Cross-validation
+* Model evaluation with MAE
+
+---
+
+## **Tech Stack**
+
+* **R**
+* **tidyverse**
+* **ggplot2**
+* **caret**
+* **MASS**
+* **mgcv**
+
